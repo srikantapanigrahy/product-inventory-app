@@ -23,12 +23,28 @@ connectDB();
 
 // ✅ Global Middlewares
 app.use(helmet());                 // Secure HTTP headers
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true
-}));    // Allow CORS
+const allowedOrigins = [
+  "http://localhost:3000", // local frontend
+  "https://product-inventory-app-1.onrender.com", // ✅ your live Render frontend
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like Postman or curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);    // Allow CORS
 app.use(express.json());           // Parse JSON
-app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev")); // Log requests
+app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev")); 
+// Log requests
 app.use(errorHandler);           // Global error handler
 
 
