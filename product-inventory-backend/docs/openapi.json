@@ -1,0 +1,417 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Product Inventory API",
+    "version": "1.0.0",
+    "description": "API documentation for Product Inventory Management System. Includes authentication, item, and sales endpoints."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "Provide your API key for authentication"
+      }
+    },
+    "schemas": {
+      "Item": {
+        "type": "object",
+        "required": [
+          "name",
+          "dealerName",
+          "purchasePrice",
+          "transportCost",
+          "quantity"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Item name"
+          },
+          "dealerName": {
+            "type": "string",
+            "description": "Dealer or distributor name"
+          },
+          "purchaseDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "purchasePrice": {
+            "type": "number"
+          },
+          "transportCost": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          }
+        },
+        "example": {
+          "name": "Samsung A55",
+          "dealerName": "Star Mobile Distributors",
+          "purchaseDate": "2025-11-08",
+          "purchasePrice": 20000,
+          "transportCost": 500,
+          "quantity": 20
+        }
+      },
+      "Sale": {
+        "type": "object",
+        "required": [
+          "itemId",
+          "shopName",
+          "shopAddress",
+          "quantitySold",
+          "sellingPricePerUnit",
+          "saleDate"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "The ID of the item being sold (ObjectId)",
+            "example": "673a1b2c4f8e9a12bc34de90"
+          },
+          "shopName": {
+            "type": "string",
+            "description": "The name of the shop buying the item",
+            "example": "Mobile Mart"
+          },
+          "shopAddress": {
+            "type": "string",
+            "description": "Address of the shop",
+            "example": "Market Road, Cuttack, Odisha"
+          },
+          "quantitySold": {
+            "type": "number",
+            "description": "Number of items sold",
+            "example": 5
+          },
+          "sellingPricePerUnit": {
+            "type": "number",
+            "description": "Selling price per item",
+            "example": 25000
+          },
+          "saleDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-11-08"
+          }
+        },
+        "example": {
+          "itemId": "673a1b2c4f8e9a12bc34de90",
+          "shopName": "Mobile Mart",
+          "shopAddress": "Market Road, Cuttack",
+          "quantitySold": 5,
+          "sellingPricePerUnit": 25000,
+          "saleDate": "2025-11-08"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": [],
+      "apiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User registered successfully"
+          }
+        }
+      }
+    },
+    "/items": {
+      "post": {
+        "summary": "Create a new item",
+        "tags": [
+          "Items"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Item"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales": {
+      "post": {
+        "summary": "Record a new sale",
+        "description": "Creates a new sale record linked to an existing item.",
+        "tags": [
+          "Sales"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Sale"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sale created successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Sale created successfully",
+                  "sale": {
+                    "_id": "673a1b2c9e8f4b45a8cf12d3",
+                    "shopName": "Mobile Mart",
+                    "quantitySold": 5,
+                    "sellingPricePerUnit": 25000,
+                    "totalSale": 125000
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing fields"
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid token"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all sales",
+        "description": "Returns a list of all recorded sales with linked item information.",
+        "tags": [
+          "Sales"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all sales",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "_id": "673a1b2c9e8f4b45a8cf12d3",
+                    "shopName": "Mobile Mart",
+                    "quantitySold": 5,
+                    "sellingPricePerUnit": 25000,
+                    "totalSale": 125000,
+                    "itemId": {
+                      "_id": "673a1b2c4f8e9a12bc34de90",
+                      "name": "Samsung A55",
+                      "dealerName": "Star Mobile Distributors",
+                      "purchasePrice": 20000,
+                      "transportCost": 500,
+                      "totalCost": 20500
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid token"
+          }
+        }
+      }
+    },
+    "/sales/{id}": {
+      "get": {
+        "summary": "Get sale by ID",
+        "description": "Fetches a single sale record by its ID.",
+        "tags": [
+          "Sales"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the sale",
+            "example": "673a1b2c9e8f4b45a8cf12d3"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sale details",
+            "content": {
+              "application/json": {
+                "example": {
+                  "_id": "673a1b2c9e8f4b45a8cf12d3",
+                  "shopName": "Mobile Mart",
+                  "quantitySold": 5,
+                  "sellingPricePerUnit": 25000,
+                  "totalSale": 125000,
+                  "saleDate": "2025-11-08",
+                  "itemId": {
+                    "_id": "673a1b2c4f8e9a12bc34de90",
+                    "name": "Samsung A55"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Sale not found"
+          }
+        }
+      }
+    },
+    "/sales/item/{itemId}": {
+      "get": {
+        "summary": "Get all sales for a specific item with totals",
+        "description": "Returns all sales for a specific item, including total revenue, total profit, and quantity sold.",
+        "tags": [
+          "Sales"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the item"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sales data and totals",
+            "content": {
+              "application/json": {
+                "example": {
+                  "itemId": "690fb4c2bd90c337a9ca1906",
+                  "totalRevenue": 328000,
+                  "totalProfit": 226000,
+                  "totalQuantity": 4,
+                  "sales": [
+                    {
+                      "_id": "690fb7b5bd90c337a9ca190c",
+                      "shopName": "Gadget World",
+                      "quantitySold": 2,
+                      "totalSale": 164000,
+                      "profit": 113000
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No sales found for this item"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "User authentication"
+    },
+    {
+      "name": "Items",
+      "description": "Manage purchased items"
+    },
+    {
+      "name": "Sales",
+      "description": "Manage product sales to local shops"
+    }
+  ]
+}
