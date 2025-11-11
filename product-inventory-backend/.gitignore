@@ -1,5 +1,30 @@
-# dependencies
+# Node dependencies
 node_modules/
+
+# Environment variables
 .env
-.DS_Store
+.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
 *.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE configs
+.vscode/
+.idea/
+
+# Cache
+.cache/
+coverage/
+
+# Temporary files
+*.tmp
+*.bak
+
+# Documentation and design artifacts
+docs/
