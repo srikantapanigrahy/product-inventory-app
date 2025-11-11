@@ -1,0 +1,71 @@
+/* 🎨 Common table styling for Items and Sales pages */
+
+.table-container {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto; /* ✅ Handles small screens */
+  margin-top: 1.5rem;
+}
+
+/* 🧾 Base Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: #333;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* 🔹 Header */
+.table thead {
+  background-color: #f3f4f6;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+  color: #444;
+}
+
+/* 🔸 Body */
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+/* 🦓 Zebra stripes */
+.table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* ✨ Hover effect */
+.table tbody tr:hover {
+  background-color: #eef2ff;
+  transition: background-color 0.2s ease;
+}
+
+/* 📱 Responsive behavior */
+@media (max-width: 768px) {
+  .table th,
+  .table td {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .table-container {
+    padding: 1rem;
+  }
+}
+
+/* 🔽 Optional - Empty state text */
+.table-empty {
+  text-align: center;
+  color: #666;
+  padding: 1rem;
+  font-style: italic;
+}

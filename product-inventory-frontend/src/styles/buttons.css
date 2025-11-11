@@ -1,0 +1,56 @@
+/* 🎨 Common button styling for all CRUD actions */
+
+.action-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #fff;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* ✅ Edit Button */
+.action-edit {
+  background-color: #007bff;
+}
+.action-edit:hover {
+  background-color: #0056b3;
+  transform: scale(1.03);
+}
+
+/* ❌ Delete Button */
+.action-delete {
+  background-color: #dc3545;
+}
+.action-delete:hover {
+  background-color: #b02a37;
+  transform: scale(1.03);
+}
+
+/* 💾 Save Button */
+.action-save {
+  background-color: #28a745;
+}
+.action-save:hover {
+  background-color: #218838;
+  transform: scale(1.03);
+}
+
+/* 🚫 Cancel Button */
+.action-cancel {
+  background-color: #6c757d;
+}
+.action-cancel:hover {
+  background-color: #5a6268;
+  transform: scale(1.03);
+}
+
+/* ➕ Add Button (for form submission) */
+.action-add {
+  background-color: #17a2b8;
+}
+.action-add:hover {
+  background-color: #138496;
+  transform: scale(1.03);
+}
