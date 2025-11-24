@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../firebaseConfig";
 
-// ✅ Create Context
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Added loading state for smoother transitions
+  const [loading, setLoading] = useState(true);
 
-  // ✅ Restore user from localStorage on app load
+  // Load user from localStorage
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("user");
@@ -15,28 +16,31 @@ export const AuthProvider = ({ children }) => {
         setUser(JSON.parse(storedUser));
       }
     } catch (error) {
-      console.error("Error loading user from storage:", error);
-      localStorage.clear(); // In case of corrupted data
+      console.error("Error loading stored user:", error);
+      localStorage.clear();
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // ✅ Login and persist data
+  // Normal login
   const login = (userData) => {
     if (!userData?.token) {
-      console.error("⚠️ Missing token in userData during login.");
+      console.error("Missing token in login()");
       return;
     }
+
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("token", userData.token);
+
     if (userData.apiKey) {
       localStorage.setItem("apiKey", userData.apiKey);
     }
+
     setUser(userData);
   };
 
-  // ✅ Logout and clear everything
+  // Logout
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
@@ -44,17 +48,33 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  // ✅ If still loading user, show a fallback (optional)
+  // ⭐ Google Login
+  const googleLogin = async () => {
+    const result = await signInWithPopup(auth, provider);
+    const gUser = result.user;
+
+    const userData = {
+      email: gUser.email,
+      name: gUser.displayName,
+      avatar: gUser.photoURL,
+      token: await gUser.getIdToken(),
+    };
+
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", userData.token);
+
+    setUser(userData);
+  };
+
   if (loading) {
     return <div style={{ padding: "2rem", textAlign: "center" }}>Loading...</div>;
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, googleLogin }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// ✅ Custom hook for easier usage
 export const useAuth = () => useContext(AuthContext);

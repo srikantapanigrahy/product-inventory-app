@@ -185,7 +185,7 @@
 .social-btn:hover { box-shadow: 0 8px 18px rgba(2,6,23,0.06) }
 
 /* google / github brand */
-.social-google { background: white; }
+.social-google { background: rgb(97, 11, 189); }
 .social-github { background: transparent; }
 
 /* helper */
