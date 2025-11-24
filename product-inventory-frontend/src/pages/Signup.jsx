@@ -1,74 +1,54 @@
 import React, { useState } from "react";
 import api from "../api/axiosConfig";
 import { useNavigate } from "react-router-dom";
-import "../styles/auth.css";
+import "../styles/theme.css";
 
-export default function Signup() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+export default function Signup(){
+  const nav = useNavigate();
+  const [form, setForm] = useState({ name:"", email:"", password:"" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
+    try{
       await api.post("/auth/signup", form);
-      alert("Account created successfully!");
-      navigate("/login");
-    } catch (err) {
-      alert("Signup failed");
+      alert("Account created — login now");
+      nav("/login");
+    }catch(e){
+      alert("Failed to create account");
     }
   };
 
   return (
-    <div className="auth-container">
+    <div className="app-bg">
       <div className="auth-card">
-        <h2 className="auth-title">Create Account</h2>
+        <h1 className="auth-title">Create account</h1>
 
         <form onSubmit={handleSubmit}>
-          <input
-            className="auth-input"
-            type="text"
-            placeholder="Full Name"
-            value={form.name}
-            onChange={(e) =>
-              setForm({ ...form, name: e.target.value })
-            }
-            required
-          />
+          <div className="field">
+            <input className="input" placeholder=" " value={form.name} onChange={e=>setForm({...form,name:e.target.value})} required />
+            <label className="label">Full name</label>
+          </div>
 
-          <input
-            className="auth-input"
-            type="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) =>
-              setForm({ ...form, email: e.target.value })
-            }
-            required
-          />
+          <div className="field">
+            <input className="input" placeholder=" " type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} required />
+            <label className="label">Email</label>
+          </div>
 
-          <input
-            className="auth-input"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={(e) =>
-              setForm({ ...form, password: e.target.value })
-            }
-            required
-          />
+          <div className="field">
+            <input className="input" placeholder=" " type="password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})} required />
+            <label className="label">Password</label>
+          </div>
 
-          <button className="auth-button" type="submit">
-            Sign Up
-          </button>
+          <button className="auth-button" type="submit">Sign up</button>
         </form>
 
-        <p className="auth-switch">
-          Already have an account?{" "}
-          <span onClick={() => navigate("/login")}>Login</span>
+        <div className="socials">
+          <button className="social-btn social-google" onClick={()=>alert("Google signup (stub)")}>Google</button>
+          <button className="social-btn social-github" onClick={()=>alert("GitHub signup (stub)")}>GitHub</button>
+        </div>
+
+        <p className="small">
+          Already have an account? <span className="link" onClick={()=>nav("/login")}>Sign in</span>
         </p>
       </div>
     </div>

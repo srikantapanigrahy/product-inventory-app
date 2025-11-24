@@ -4,17 +4,18 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
 import "./index.css"; // optional global styles
+import { ThemeProvider } from "./context/ThemeContext";
 
 // ✅ Create root element
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 // ✅ StrictMode for highlighting potential issues in development
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
+  <BrowserRouter>
+    <ThemeProvider>
       <AuthProvider>
         <App />
       </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+    </ThemeProvider>
+  </BrowserRouter>
 );
