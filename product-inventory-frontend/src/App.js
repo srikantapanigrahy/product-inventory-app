@@ -16,9 +16,13 @@ export default function App() {
     <>
       
       <Routes>
-        <Route path="/" element={<Login />} />
+        {/* Redirect root → login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+        {/* Public Routes */}
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        {/* Public Route */}
+
 
 
         {/* Protected Routes */}
@@ -54,7 +58,7 @@ export default function App() {
       {/* ✅ Toast Container (global notifications) */}
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={2000}
         hideProgressBar={false}
         newestOnTop
         closeOnClick

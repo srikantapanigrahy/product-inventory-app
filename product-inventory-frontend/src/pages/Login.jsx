@@ -2,92 +2,62 @@ import React, { useState } from "react";
 import api from "../api/axiosConfig";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import "../styles/auth.css";
 
 export default function Login() {
-  const [form, setForm] = useState({ email: "", password: "" });
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const res = await api.post("/auth/login", form);
-
-      // ✅ Backend returns: { message, token }
-      const userData = {
-        token: res.data.token,
-        email: form.email,
-      };
-
-      login(userData); // store in context + localStorage
-      toast.success("Login successful!");
+      login({ token: res.data.token });
       navigate("/dashboard");
     } catch (err) {
-      console.error("Login failed:", err);
-      toast.error("Invalid credentials. Please try again.");
+      alert("Invalid credentials");
     }
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "400px",
-        margin: "4rem auto",
-        padding: "2rem",
-        background: "white",
-        borderRadius: "10px",
-        boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-      }}
-    >
-      <h2 style={{ textAlign: "center" }}>🔐 Login</h2>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2 className="auth-title">Login</h2>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-        
-      >
-        <input
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          required
-        />
+        <form onSubmit={handleSubmit}>
+          <input
+            className="auth-input"
+            type="email"
+            placeholder="Email address"
+            value={form.email}
+            onChange={(e) =>
+              setForm({ ...form, email: e.target.value })
+            }
+            required
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          required
-        />
+          <input
+            className="auth-input"
+            type="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={(e) =>
+              setForm({ ...form, password: e.target.value })
+            }
+            required
+          />
 
-        <button
-          type="submit"
-          style={{
-            backgroundColor: "#007bff",
-            color: "white",
-            padding: "0.75rem",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Login
-        </button>
-      </form>
-      <p>
-        Don't have an account?{" "}
-        <span
-          style={{ color: "blue", cursor: "pointer" }}
-          onClick={() => navigate("/signup")}
-        >
-          Create one
-        </span>
-      </p>
+          <button className="auth-button" type="submit">
+            Login
+          </button>
+        </form>
+
+        <p className="auth-switch">
+          Don’t have an account?{" "}
+          <span onClick={() => navigate("/signup")}>Create one</span>
+        </p>
+      </div>
     </div>
   );
 }
