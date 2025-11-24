@@ -16,10 +16,12 @@ export default function Navbar() {
 
   return (
     <nav className="navbar" data-testid="navbar">
+      {/* APP TITLE */}
       <div className="navbar-title" data-testid="navbar-title">
         📦 InventoryApp
       </div>
 
+      {/* NAV LINKS */}
       <div className="nav-links">
         <NavLink
           to="/dashboard"
@@ -28,7 +30,6 @@ export default function Navbar() {
           }
           data-testid="nav-dashboard"
           data-tooltip="Go to Dashboard"
-          
         >
           Dashboard
         </NavLink>
@@ -39,7 +40,7 @@ export default function Navbar() {
             isActive ? "nav-link active" : "nav-link"
           }
           data-testid="nav-items"
-          data-tooltip="Manage your Items"
+          data-tooltip="Manage Items"
         >
           Items
         </NavLink>
@@ -50,25 +51,30 @@ export default function Navbar() {
             isActive ? "nav-link active" : "nav-link"
           }
           data-testid="nav-sales"
-          data-tooltip="View Sales History"
+          data-tooltip="View Sales"
         >
           Sales
         </NavLink>
       </div>
 
-      <button
-        onClick={handleLogout}
-        className="logout-button"
-        data-testid="logout-button"
-      >
-        Logout
-      </button>
-      <div style={{ marginLeft: "auto", display: "flex", gap: "8px", alignItems: "center" }}>
-        <button onClick={toggle} style={{
-          padding: "8px 10px", borderRadius: 8, border: "none", cursor: "pointer",
-          background: "transparent", color: "var(--text)"
-        }}>
+      {/* RIGHT SIDE BUTTONS */}
+      <div className="nav-actions">
+        {/* THEME TOGGLE */}
+        <button
+          onClick={toggle}
+          className="theme-toggle"
+          data-testid="theme-toggle"
+        >
           {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
+        </button>
+
+        {/* LOGOUT BUTTON */}
+        <button
+          onClick={handleLogout}
+          className="logout-button"
+          data-testid="logout-button"
+        >
+          Logout
         </button>
       </div>
     </nav>
