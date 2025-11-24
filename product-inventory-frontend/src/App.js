@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Items from "./pages/Items";
@@ -13,10 +14,12 @@ import ProtectedRoute from "./components/ProtectedRoute";
 export default function App() {
   return (
     <>
+      
       <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         {/* Public Route */}
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
+
 
         {/* Protected Routes */}
         <Route

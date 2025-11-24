@@ -46,6 +46,7 @@ export default function Login() {
       <form
         onSubmit={handleSubmit}
         style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        
       >
         <input
           type="email"
@@ -78,6 +79,15 @@ export default function Login() {
           Login
         </button>
       </form>
+      <p>
+        Don't have an account?{" "}
+        <span
+          style={{ color: "blue", cursor: "pointer" }}
+          onClick={() => navigate("/signup")}
+        >
+          Create one
+        </span>
+      </p>
     </div>
   );
 }
