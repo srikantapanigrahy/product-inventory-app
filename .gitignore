@@ -32,7 +32,7 @@ reports/
 
 # Backend specific ignores
 product-inventory-backend/docs/
-product-inventory-backend/src/config/serviceAccountKey.json
 
+product-inventory-backend/src/config/serviceAccountKey.json
 # Frontend build
 product-inventory-frontend/build/
