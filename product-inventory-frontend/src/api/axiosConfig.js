@@ -8,18 +8,28 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use((config) => {
-  if (config.url.includes("/auth/")) return config;
+api.interceptors.request.use(
+  (config) => {
+    // Allow login and signup without JWT
+    if (
+      config.url.includes("/auth/login") ||
+      config.url.includes("/auth/signup")
+    ) {
+      return config;
+    }
 
-  const token = localStorage.getItem("token");
-  const apiKey = localStorage.getItem("apiKey") || APP_CONFIG.API_KEY;
+    // 🔥 But DO NOT skip /auth/google
+    // Because we MUST send Firebase ID token to backend
 
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  if (apiKey) config.headers["x-api-key"] = apiKey;
+    const token = localStorage.getItem("token");
+    const apiKey = localStorage.getItem("apiKey") || APP_CONFIG.API_KEY;
 
-  return config;
-},
- (error) => Promise.reject(error)
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    if (apiKey) config.headers["x-api-key"] = apiKey;
+
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
 export default api;

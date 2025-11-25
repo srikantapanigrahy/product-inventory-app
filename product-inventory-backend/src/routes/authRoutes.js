@@ -71,5 +71,6 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+  router.post("/google", googleLogin);
 
 export default router;

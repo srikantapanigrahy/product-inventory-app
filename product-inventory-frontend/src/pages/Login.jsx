@@ -8,7 +8,7 @@ import "./../styles/authButtons.css";
 import googleLogo from "../assets/google.png";
 
 export default function Login() {
-  const { login, googleLogin } = useAuth();   // ⭐ FIXED: single useAuth()
+  const { login, googleLogin } = useAuth();
   const nav = useNavigate();
   const { theme } = useTheme();
 
@@ -17,7 +17,7 @@ export default function Login() {
     password: "",
   });
 
-  // Normal username/password login
+  // Normal login handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -29,21 +29,25 @@ export default function Login() {
     }
   };
 
-  // ⭐ Google Login Handler (with redirect)
+  // Google Login
   const handleGoogle = async () => {
     try {
-      await googleLogin();
-      nav("/dashboard");  // ⭐ redirect after Google login
+      await googleLogin();   // AuthContext handles token + backend call
+      nav("/dashboard");
     } catch (err) {
       console.error("Google login failed:", err);
+      alert("Google Sign-in failed");
     }
   };
 
   return (
     <div className="app-bg">
       <div className="auth-card" role="main" aria-labelledby="login-title">
-        <h1 id="login-title" className="auth-title">Welcome back</h1>
+        <h1 id="login-title" className="auth-title">
+          Welcome back
+        </h1>
 
+        {/* Login Form */}
         <form onSubmit={handleSubmit} aria-label="Login form">
           <div className="field">
             <input
@@ -76,31 +80,15 @@ export default function Login() {
           </button>
         </form>
 
+        {/* Divider */}
         <div className="row">
           <div className="small">Or continue with</div>
-          <div style={{ width: 8 }} />
         </div>
 
+        {/* Social Login Section */}
         <div className="socials" role="list">
-          {/* Old stub buttons */}
-          <button
-            className="social-btn social-google"
-            onClick={() => alert("Use the Google button below")}
-            aria-label="Social Google (stub)"
-          >
-            <img src="/logo192.png" alt="" style={{ width: 18, height: 18 }} />
-            <span>Google (stub)</span>
-          </button>
 
-          <button className="social-btn social-github" onClick={() => alert("Stub")} aria-label="GitHub stub">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 .5C5.38.5 0 5.88 0..."
-              />
-            </svg>
-            <span>GitHub (stub)</span>
-          </button>
-
-          {/* ⭐ Actual Google Login Button */}
+          {/* Google Login (Actual Button) */}
           <button className="google-btn" onClick={handleGoogle}>
             <img src={googleLogo} className="google-icon" alt="Google" />
             Continue with Google

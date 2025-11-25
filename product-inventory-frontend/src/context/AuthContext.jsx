@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../firebaseConfig";
+import api from "../api/axiosConfig";
 
 const AuthContext = createContext(null);
 
@@ -8,42 +9,19 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage
+  // Load user from localStorage on refresh
   useEffect(() => {
-  const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
-    if (firebaseUser) {
-      const token = await firebaseUser.getIdToken();
-
-      const userData = {
-        email: firebaseUser.email,
-        name: firebaseUser.displayName,
-        avatar: firebaseUser.photoURL,
-        token: token,
-      };
-
-      // Save in localStorage
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("token", token);
-
-      setUser(userData);
-    } else {
-      // User logged out
-      setUser(null);
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
     }
-
     setLoading(false);
-  });
+  }, []);
 
-  return () => unsubscribe();
-}, []);
-
-
-  // Normal login
+  // Normal Login (email/password)
   const login = (userData) => {
     if (!userData?.token) {
-      console.error("Missing token in login()");
+      console.error("Login failed: Missing token");
       return;
     }
 
@@ -65,27 +43,42 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  // ⭐ Google Login
+  // ⭐ Google Login (Fixed)
   const googleLogin = async () => {
-    const result = await signInWithPopup(auth, provider);
-    const gUser = result.user;
+    try {
+      // 1. Login with Firebase popup
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
 
-    const userData = {
-      email: gUser.email,
-      name: gUser.displayName,
-      avatar: gUser.photoURL,
-      token: await gUser.getIdToken(),
-    };
+      // 2. Get Firebase ID Token
+      const idToken = await firebaseUser.getIdToken();
 
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", userData.token);
+      // 3. Send Firebase token to backend
+      const res = await api.post("/auth/google", { idToken });
 
-    setUser(userData);
+      // 4. Backend JWT
+      const backendToken = res.data.token;
+      const backendUser = res.data.user;
+
+      const userData = {
+        email: backendUser.email,
+        name: backendUser.name,
+        avatar: backendUser.avatar,
+        token: backendToken, // our backend JWT
+      };
+
+      // 5. Save JWT + user
+      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("token", backendToken);
+
+      setUser(userData);
+    } catch (err) {
+      console.error("Google login failed:", err);
+      throw err;
+    }
   };
 
-  if (loading) {
-    return <div style={{ padding: "2rem", textAlign: "center" }}>Loading...</div>;
-  }
+  if (loading) return <div style={{ padding: "2rem", textAlign: "center" }}>Loading...</div>;
 
   return (
     <AuthContext.Provider value={{ user, login, logout, googleLogin }}>
