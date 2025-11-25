@@ -10,18 +10,35 @@ export const AuthProvider = ({ children }) => {
 
   // Load user from localStorage
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (error) {
-      console.error("Error loading stored user:", error);
-      localStorage.clear();
-    } finally {
-      setLoading(false);
+  const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+    if (firebaseUser) {
+      const token = await firebaseUser.getIdToken();
+
+      const userData = {
+        email: firebaseUser.email,
+        name: firebaseUser.displayName,
+        avatar: firebaseUser.photoURL,
+        token: token,
+      };
+
+      // Save in localStorage
+      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("token", token);
+
+      setUser(userData);
+    } else {
+      // User logged out
+      setUser(null);
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
     }
-  }, []);
+
+    setLoading(false);
+  });
+
+  return () => unsubscribe();
+}, []);
+
 
   // Normal login
   const login = (userData) => {

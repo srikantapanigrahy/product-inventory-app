@@ -186,7 +186,7 @@
 
 /* google / github brand */
 .social-google { background: rgb(97, 11, 189); }
-.social-github { background: transparent; }
+.social-github { background: rgb(4, 77, 9); }
 
 /* helper */
 .small { font-size:0.85rem; color:var(--muted); margin-top:0.6rem; text-align:center }
