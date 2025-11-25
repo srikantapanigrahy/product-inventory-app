@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
       const idToken = await firebaseUser.getIdToken();
 
       // 3. Send Firebase token to backend
-      const res = await api.post("/auth/google", { idToken });
+      const res = await api.post("/api/v1/auth/google", { idToken });
 
       // 4. Backend JWT
       const backendToken = res.data.token;
