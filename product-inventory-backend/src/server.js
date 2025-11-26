@@ -26,6 +26,7 @@ app.use(helmet());                 // Secure HTTP headers
 const allowedOrigins = [
   "http://localhost:3000", // local frontend
   "https://product-inventory-app-1.onrender.com", // ✅ your live Render frontend
+  "https://product-inventory-app-po1c.onrender.com", // BACKEND (Render)
 ];
 
 app.use(
