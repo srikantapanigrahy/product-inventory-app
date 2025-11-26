@@ -1,43 +1,47 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import zxcvbn from "zxcvbn";
 import "../styles/passwordStrength.css";
 
-export default function PasswordStrengthMeter({ password, email }) {
-  if (!password) return null;
+export default function PasswordStrengthMeter({ password, setScore }) {
+  const [strength, setStrength] = useState(0);
 
-  const minLength = password.length >= 8;
-  const hasUpper = /[A-Z]/.test(password);
-  const hasLower = /[a-z]/.test(password);
-  const hasNumber = /[0-9]/.test(password);
-  const hasSymbol = /[^A-Za-z0-9]/.test(password);
-  const noEmail = email ? !password.includes(email.split("@")[0]) : true;
+  useEffect(() => {
+    // Avoid running when password empty
+    if (!password) {
+      setStrength(0);
+      setScore(0);
+      return;
+    }
 
-  const strengthScore =
-    [minLength, hasUpper, hasLower, hasNumber, hasSymbol, noEmail].filter(Boolean)
-      .length;
+    const result = zxcvbn(password);
+    setStrength(result.score);
+    setScore(result.score);  // parent receives score
+  }, [password, setScore]); // ⭐ include setScore (ESLint safe)
 
-  const getStrengthLabel = () => {
-    if (strengthScore <= 2) return "Weak";
-    if (strengthScore <= 4) return "Medium";
-    return "Strong";
-  };
+  const strengthLevels = [
+    { label: "Very Weak", color: "#ff3e36" },
+    { label: "Weak", color: "#ff691f" },
+    { label: "Fair", color: "#ffda3a" },
+    { label: "Good", color: "#0be779" },
+    { label: "Strong", color: "#2dbf50" },
+  ];
+
+  const { label, color } = strengthLevels[strength];
 
   return (
-    <div className="strength-box">
-      <div className="strength-header">
-        <span>Password strength:</span>
-        <span className={`strength-label ${getStrengthLabel().toLowerCase()}`}>
-          {getStrengthLabel()}
-        </span>
+    <div className="strength-container">
+      <div className="bars">
+        {[0, 1, 2, 3, 4].map((idx) => (
+          <div
+            key={idx}
+            className="bar"
+            style={{
+              backgroundColor: idx <= strength ? color : "#eee",
+            }}
+          ></div>
+        ))}
       </div>
-
-      <ul className="checklist">
-        <li className={minLength ? "good" : "bad"}>✓ Must be at least 8 characters</li>
-        <li className={hasUpper ? "good" : "bad"}>✓ Contains an uppercase letter</li>
-        <li className={hasLower ? "good" : "bad"}>✓ Contains a lowercase letter</li>
-        <li className={hasNumber ? "good" : "bad"}>✓ Contains a number</li>
-        <li className={hasSymbol ? "good" : "bad"}>✓ Contains a special character</li>
-        <li className={noEmail ? "good" : "bad"}>✓ Does not contain your email</li>
-      </ul>
+      {password && <p className="strength-label" style={{ color }}>{label}</p>}
     </div>
   );
 }
