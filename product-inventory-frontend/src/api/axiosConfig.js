@@ -17,10 +17,7 @@ api.interceptors.request.use(
     ) {
       return config;
     }
-
-    // 🔥 But DO NOT skip /auth/google
-    // Because we MUST send Firebase ID token to backend
-
+  
     const token = localStorage.getItem("token");
     const apiKey = localStorage.getItem("apiKey") || APP_CONFIG.API_KEY;
 

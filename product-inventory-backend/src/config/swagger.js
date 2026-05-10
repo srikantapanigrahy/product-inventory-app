@@ -24,10 +24,10 @@ const options = {
           scheme: "bearer",
           bearerFormat: "JWT"
         },
-        apiKeyAuth: {                 // 👈 Add this
+        apiKeyAuth: {              
           type: "apiKey",
           in: "header",
-          name: "x-api-key",          // 👈 Key name clients must send
+          name: "x-api-key", 
           description: "Provide your API key for authentication"
         }
       }

@@ -1,0 +1,97 @@
+name: Inventory CI/CD
+
+on:
+  push:
+    branches:
+      - dev
+      - qa
+      - main
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # ------------------------------
+    # Checkout app repo
+    # ------------------------------
+    - name: Checkout App Code
+      uses: actions/checkout@v3
+
+    # ------------------------------
+    # Checkout Automation Tests repo
+    # ------------------------------
+    - name: Checkout Automation Tests
+      uses: actions/checkout@v3
+      with:
+        repository: SrikantaPanigrahy/inventory-tests
+        path: tests
+
+    # ------------------------------
+    # Setup Node
+    # ------------------------------
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    # ------------------------------
+    # Build Backend
+    # ------------------------------
+    - name: Install Backend
+      run: |
+        cd backend
+        npm install
+
+    - name: Backend Tests (if any)
+      run: |
+        cd backend
+        npm test --if-present
+
+    # ------------------------------
+    # Build Frontend
+    # ------------------------------
+    - name: Install Frontend
+      run: |
+        cd frontend
+        npm install
+
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm run build
+
+    # ------------------------------
+    # Run Cypress Tests
+    # ------------------------------
+    - name: Run Cypress Tests
+      run: |
+        cd tests
+        npm install
+        npx cypress run
+
+    # ------------------------------
+    # Deploy to QA
+    # ------------------------------
+    - name: Deploy to QA Backend
+      if: github.ref == 'refs/heads/qa'
+      run: |
+        curl "$RENDER_QA_BACKEND_HOOK"
+
+    - name: Deploy to QA Frontend
+      if: github.ref == 'refs/heads/qa'
+      run: |
+        curl "$RENDER_QA_FRONTEND_HOOK"
+
+    # ------------------------------
+    # Deploy to PROD
+    # ------------------------------
+    - name: Deploy to PROD Backend
+      if: github.ref == 'refs/heads/main'
+      run: |
+        curl "$RENDER_PROD_BACKEND_HOOK"
+
+    - name: Deploy to PROD Frontend
+      if: github.ref == 'refs/heads/main'
+      run: |
+        curl "$RENDER_PROD_FRONTEND_HOOK"

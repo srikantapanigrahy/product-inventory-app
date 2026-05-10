@@ -10,22 +10,19 @@ import Items from "./pages/Items";
 import Sales from "./pages/Sales";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// ✅ Centralized application routes
+import "./theme.css";
+
 export default function App() {
   return (
-    <>
-      
+    <div className="app-bg">
+
       <Routes>
-        {/* Redirect root → login */}
+
         <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-
-
-        {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={
@@ -34,6 +31,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/items"
           element={
@@ -42,6 +40,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/sales"
           element={
@@ -51,22 +50,16 @@ export default function App() {
           }
         />
 
-        {/* Catch-all redirect for unknown routes */}
         <Route path="*" element={<Navigate to="/login" replace />} />
+
       </Routes>
 
-      {/* ✅ Toast Container (global notifications) */}
       <ToastContainer
         position="top-right"
         autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
         theme="colored"
       />
-    </>
+
+    </div>
   );
 }
